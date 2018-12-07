@@ -25,6 +25,8 @@
 /* Begin PBXFileReference section */
 		E4ED2E2521B8DF0000E17A12 /* plagiarismCatcher */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = plagiarismCatcher; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4ED2E2821B8DF0000E17A12 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		E4ED2E3221BA3BC800E17A12 /* READ_ME.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = READ_ME.txt; sourceTree = "<group>"; };
+		E4ED2E3321BA3BC800E17A12 /* makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = makefile; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,6 +59,8 @@
 		E4ED2E2721B8DF0000E17A12 /* plagiarismCatcher */ = {
 			isa = PBXGroup;
 			children = (
+				E4ED2E3321BA3BC800E17A12 /* makefile */,
+				E4ED2E3221BA3BC800E17A12 /* READ_ME.txt */,
 				E4ED2E2821B8DF0000E17A12 /* main.cpp */,
 			);
 			path = plagiarismCatcher;
