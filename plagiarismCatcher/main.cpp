@@ -37,13 +37,13 @@ public:
 
 int hashI(string key){
     
-    int ans=7;
+    int ans=0;
     for (int i = 0; i < key.size(); i++) {
-        ans += key.at(i);
+        ans += 31*ans + key.at(i);
+        ans%=hashSize;
     }
-    ans*=353;
-    return ans%hashSize;
     
+    return ans;
 }
 
 void put(string key,int fileI,hashNode *tbl[]){
@@ -129,10 +129,9 @@ for (unsigned int i = 0;i < files.size();i++) {
         cFile.erase(cFile.begin());
         put(tempWord,i,table);
     }
-    
-    
     cFile.clear();
 }
+    
     
     
     std::cout << "Hello, World!\n";
