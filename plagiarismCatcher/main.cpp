@@ -79,6 +79,15 @@ int getdir (string dir, vector<string> &files)
     return 0;
 }
 
+string strFormat(string input){
+        string rtn;
+        for(int i = 0; i < input.length(); i++) {
+            if(isalpha(input[i]))
+                rtn += input[i];
+        }
+        return rtn;
+}
+
 int main(int argc, const char * argv[]) {
     // insert code here...
     
@@ -99,11 +108,28 @@ argv[2]="6";
     
     hashNode* table[hashSize];
     string wPath=cPath+"/";
+    vector<string> cFile = vector<string>();
+    string tempWord;
     
 for (unsigned int i = 0;i < files.size();i++) {
-    cout << i << ": " << wPath+files[i] << endl;
+    cout << endl << i << ": " << wPath+files[i] << endl;
     
-    ifstream input(wPath+files[i]);
+    ifstream wFile;
+    wFile.open(wPath+files[i]);
+    while(wFile >> tempWord){
+        tempWord=strFormat(tempWord);
+        transform(tempWord.begin(), tempWord.end(), tempWord.begin(), ::tolower);
+        cFile.push_back(tempWord);
+//cout<< tempWord;
+    }
+    
+    while(cFile.size()>=n){
+        tempWord=cFile.at(0)+cFile.at(1)+cFile.at(2)+cFile.at(3)+cFile.at(4)+cFile.at(5);
+        cout << tempWord << endl;
+        cFile.erase(cFile.begin());
+    }
+    
+    cFile.clear();
 }
     
     
