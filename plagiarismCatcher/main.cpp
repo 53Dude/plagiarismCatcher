@@ -131,8 +131,8 @@ int main(int argc, const char * argv[]) {
     // insert code here...
     
 /////////////////////////// REPLACES ARGV[1&2] FOR XCODE TESTING
-argv[1]="big_doc_set";
-argv[2]="6";
+//argv[1]="sm_doc_set";
+//argv[2]="6";
 //////////////////////////
     
     const string& cPath = argv[1];
@@ -151,14 +151,14 @@ argv[2]="6";
     string openFrom;
     
     for (unsigned int i = 0;i < files.size();i++) {
-    //cout << endl << i << ": " << wPath+files[i] << endl;
+//cout << endl << i << ": " << wPath+files[i] << endl;
         
         fstream wFile;
         wFile.open((wPath+files[i]).c_str());
         while(wFile >> tempWord&&cFile.size()<6){
                 tempWord=strFormat(tempWord);
                 cFile.push_back(tempWord);
-    //cout<< tempWord;
+//cout<< tempWord;
         }
         
         tempWord=cFile.at(0)+cFile.at(1)+cFile.at(2)+cFile.at(3)+cFile.at(4)+cFile.at(5);
@@ -182,6 +182,7 @@ argv[2]="6";
     
     hashNode *temp;
     hashNode *temp2;
+    hashNode *del;
     
     for(int i=0;i<HASH_SIZE;i++){
         if(table[i]!=NULL&&table[i]->next!=NULL){
@@ -195,6 +196,11 @@ argv[2]="6";
                 temp=temp->next;
                 temp2=table[i];
             }
+        }
+        while(table[i]!=NULL){
+            del=table[i];
+            table[i]=table[i]->next;
+            delete(del);
         }
     }
     
@@ -218,8 +224,7 @@ argv[2]="6";
         }
         sim[bigX][bigY]=0;
     }
-            
     
-    std::cout << "Hello, World!\n";
+//std::cout << "Hello, World!\n";
     return 0;
 }
