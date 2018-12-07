@@ -14,8 +14,13 @@
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
+#include <algorithm>
+#include <cstring>
+#include <cstdlib>
+#include <stdlib.h>
 
-#define hashSize 1000000
+#define MAX_FILE_NUM 1355
+#define HASH_SIZE 1000000
 
 using namespace std;
 
@@ -35,25 +40,43 @@ public:
     
 };
 
+hashNode* table[HASH_SIZE];
+
 int hashI(string key){
     
     int ans=0;
     for (int i = 0; i < key.size(); i++) {
         ans += 31*ans + key.at(i);
-        ans%=hashSize;
+        ans%=HASH_SIZE;
     }
     
     return ans;
 }
 
-void put(string key,int fileI,hashNode *tbl[]){
+void put(string key,int curFile){
     
     int idx=hashI(key);
+    hashNode *temp=table[idx];
     
-    hashNode *temp = new hashNode(fileI);
+    if(temp==NULL){
+        temp = new hashNode(curFile);
+        
+        temp->next=table[idx];
+        table[idx]=temp;
+        return;
+    }
     
-    temp->next=tbl[idx];
-    tbl[idx]=temp;
+    while(temp->next!=NULL){
+        if(temp->fileI==curFile){
+            return;
+        }
+        else
+            temp=temp->next;
+    }
+    temp = new hashNode(curFile);
+    
+    temp->next=table[idx];
+    table[idx]=temp;
     
 }
 
@@ -84,11 +107,31 @@ string strFormat(string input){
     return rtn;
 }
 
+class dnEntry{
+public:
+    int x;
+    int y;
+};
+vector<dnEntry> dne;
+
+bool done(int x,int y){
+    
+    for(int i=0;i<dne.size();i++){
+        if((x==dne[i].x&&y==dne[i].y)||(x==dne[i].y&&y==dne[i].x))
+            return true;
+    }
+    dnEntry temp;
+    temp.x=x;
+    temp.y=y;
+    dne.push_back(temp);
+    return false;
+}
+
 int main(int argc, const char * argv[]) {
     // insert code here...
     
 /////////////////////////// REPLACES ARGV[1&2] FOR XCODE TESTING
-argv[1]="sm_doc_set";
+argv[1]="big_doc_set";
 argv[2]="6";
 //////////////////////////
     
@@ -102,37 +145,80 @@ argv[2]="6";
     getdir(cPath,files);
     files.erase(files.begin(),files.begin()+2);
     
-    hashNode* table[hashSize];
     string wPath=cPath+"/";
     vector<string> cFile = vector<string>();
     string tempWord;
+    string openFrom;
     
-for (unsigned int i = 0;i < files.size();i++) {
-    cout << endl << i << ": " << wPath+files[i] << endl;
-    
-    ifstream wFile;
-    wFile.open(wPath+files[i]);
-    while(wFile >> tempWord&&cFile.size()<6){
-            tempWord=strFormat(tempWord);
-            cFile.push_back(tempWord);
-//cout<< tempWord;
-    }
-    
-    tempWord=cFile.at(0)+cFile.at(1)+cFile.at(2)+cFile.at(3)+cFile.at(4)+cFile.at(5);
-    cFile.erase(cFile.begin());
-    put(tempWord,i,table);
-    
-    while(wFile >> tempWord){
-        tempWord=strFormat(tempWord);
-        cFile.push_back(tempWord);
+    for (unsigned int i = 0;i < files.size();i++) {
+    //cout << endl << i << ": " << wPath+files[i] << endl;
+        
+        fstream wFile;
+        wFile.open((wPath+files[i]).c_str());
+        while(wFile >> tempWord&&cFile.size()<6){
+                tempWord=strFormat(tempWord);
+                cFile.push_back(tempWord);
+    //cout<< tempWord;
+        }
+        
         tempWord=cFile.at(0)+cFile.at(1)+cFile.at(2)+cFile.at(3)+cFile.at(4)+cFile.at(5);
         cFile.erase(cFile.begin());
-        put(tempWord,i,table);
+        put(tempWord,i);
+        
+        while(wFile >> tempWord){
+            tempWord=strFormat(tempWord);
+            cFile.push_back(tempWord);
+            tempWord=cFile.at(0)+cFile.at(1)+cFile.at(2)+cFile.at(3)+cFile.at(4)+cFile.at(5);
+            cFile.erase(cFile.begin());
+            put(tempWord,i);
+        }
+        cFile.clear();
     }
-    cFile.clear();
-}
     
+    int sim[MAX_FILE_NUM ][MAX_FILE_NUM ];
+    for(int i=0;i<files.size();i++)
+        for(int j=0;j<files.size();j++)
+            sim[i][j]=0;
     
+    hashNode *temp;
+    hashNode *temp2;
+    
+    for(int i=0;i<HASH_SIZE;i++){
+        if(table[i]!=NULL&&table[i]->next!=NULL){
+            temp=table[i];
+            temp2=table[i];
+            while(temp!=NULL){
+                while(temp2!=NULL){
+                    sim[temp->fileI][temp2->fileI]++;
+                    temp2=temp2->next;
+                }
+                temp=temp->next;
+                temp2=table[i];
+            }
+        }
+    }
+    
+    int bigX=0;
+    int bigY=0;
+    bool cont=true;
+    
+    while(cont){
+        cont=false;
+        for(int i=0;i<files.size();i++){
+            for(int j=0;j<files.size();j++){
+                if(sim[i][j]>sim[bigX][bigY]&&sim[i][j]>200){
+                    bigX=i;
+                    bigY=j;
+                    cont=true;
+                }
+            }
+        }
+        if(bigX!=bigY&&!done(bigX,bigY)){
+            cout << sim[bigX][bigY] << ": " << files[bigX] << "," << files[bigY] << endl;
+        }
+        sim[bigX][bigY]=0;
+    }
+            
     
     std::cout << "Hello, World!\n";
     return 0;
