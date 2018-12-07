@@ -35,31 +35,25 @@ public:
     
 };
 
-int hashK(string key){
+int hashI(string key){
     
     int ans=7;
     for (int i = 0; i < key.size(); i++) {
-        ans = ans*31 + key.at(i);
+        ans += key.at(i);
     }
-    return ans;
-    
-}
-
-int hash2idx(int hashRaw){
-    
-    return hashRaw%hashSize;
+    ans*=353;
+    return ans%hashSize;
     
 }
 
 void put(string key,int fileI,hashNode *tbl[]){
     
-    int kHash=hashK(key);
-    int kIdx=hash2idx(kHash);
+    int idx=hashI(key);
     
     hashNode *temp = new hashNode(fileI);
     
-    temp->next=tbl[kIdx];
-    tbl[kIdx]=temp;
+    temp->next=tbl[idx];
+    tbl[idx]=temp;
     
 }
 
@@ -80,12 +74,14 @@ int getdir (string dir, vector<string> &files)
 }
 
 string strFormat(string input){
-        string rtn;
-        for(int i = 0; i < input.length(); i++) {
-            if(isalpha(input[i]))
-                rtn += input[i];
-        }
-        return rtn;
+    string rtn;
+    for(int i = 0; i < input.length(); i++) {
+        if(((int)input[i]>64&&(int)input[i]<91)||((int)input[i]>96&&(int)input[i]<123))
+            rtn += input[i];
+    }
+    transform(rtn.begin(), rtn.end(), rtn.begin(), ::tolower);
+
+    return rtn;
 }
 
 int main(int argc, const char * argv[]) {
@@ -116,18 +112,24 @@ for (unsigned int i = 0;i < files.size();i++) {
     
     ifstream wFile;
     wFile.open(wPath+files[i]);
-    while(wFile >> tempWord){
-        tempWord=strFormat(tempWord);
-        transform(tempWord.begin(), tempWord.end(), tempWord.begin(), ::tolower);
-        cFile.push_back(tempWord);
+    while(wFile >> tempWord&&cFile.size()<6){
+            tempWord=strFormat(tempWord);
+            cFile.push_back(tempWord);
 //cout<< tempWord;
     }
     
-    while(cFile.size()>=n){
+    tempWord=cFile.at(0)+cFile.at(1)+cFile.at(2)+cFile.at(3)+cFile.at(4)+cFile.at(5);
+    cFile.erase(cFile.begin());
+    put(tempWord,i,table);
+    
+    while(wFile >> tempWord){
+        tempWord=strFormat(tempWord);
+        cFile.push_back(tempWord);
         tempWord=cFile.at(0)+cFile.at(1)+cFile.at(2)+cFile.at(3)+cFile.at(4)+cFile.at(5);
-        cout << tempWord << endl;
         cFile.erase(cFile.begin());
+        put(tempWord,i,table);
     }
+    
     
     cFile.clear();
 }
